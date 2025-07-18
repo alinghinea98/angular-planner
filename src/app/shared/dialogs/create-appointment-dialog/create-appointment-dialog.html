@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>New Appointment</h2>
+<mat-dialog-content class="dialog-form">
+    <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Patient Name</mat-label>
+        <input matInput [(ngModel)]="patient" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Reason</mat-label>
+        <input matInput [(ngModel)]="reason" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Date</mat-label>
+        <input disabled matInput [matDatepicker]="picker" [(ngModel)]="start" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Time</mat-label>
+        <input matInput (blur)="formatTime($event)" [(ngModel)]="time" placeholder="HH:mm" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Duration</mat-label>
+        <mat-select [(ngModel)]="duration">
+            @for (d of durationOptions; track d) {
+            <mat-option [value]="d">{{ d }} minutes</mat-option>
+            }
+        </mat-select>
+    </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-flat-button color="primary" (click)="save()">Save</button>
+</mat-dialog-actions>

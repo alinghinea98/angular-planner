@@ -1,0 +1,74 @@
+.dashboard-container {
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  color: #3f51b5;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+table {
+  width: 100%;
+  border-spacing: 0 10px;
+  border-collapse: separate;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+button[mat-raised-button] {
+  font-weight: 500;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+}
+
+.mat-header-cell {
+  font-weight: 600;
+  background-color: #f1f3f6;
+}
+
+.mat-cell {
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+.modern-table {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.status-chip {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.confirmed {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.pending {
+  background-color: #fff3e0;
+  color: #ef6c00;
+}
+
+.canceled {
+  background-color: #ffebee;
+  color: #c62828;
+}
