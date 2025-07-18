@@ -39,6 +39,7 @@ export class CreateAppointmentDialog {
   reason: string = '';
   time: string = '';
   start: Date;
+  end: Date | null = null;
   duration: number | null = null;
   durationOptions = [10, 15, 30, 45, 60];
 
@@ -47,6 +48,9 @@ export class CreateAppointmentDialog {
     @Inject(MAT_DIALOG_DATA) public data: { date: Date }
   ) {
     this.start = data.date;
+    const hours = this.start.getHours().toString().padStart(2, '0');
+    const minutes = this.start.getMinutes().toString().padStart(2, '0');
+    this.time = `${hours}:${minutes}`;
   }
 
   formatTime(event: Event): void {
@@ -56,11 +60,14 @@ export class CreateAppointmentDialog {
 
   save(): void {
     if (!this.start || !this.time || !this.patient) return;
+    const [hours, minutes] = this.time.split(':');
+    this.start.setHours(+hours, +minutes, 0, 0);
+    this.end = new Date(this.start.getTime() + this.duration! * 60000);
     this.dialogRef.close({
       patient: this.patient,
       reason: this.reason,
       start: this.start,
-      time: this.time
+      end: this.end
     });
   }
 

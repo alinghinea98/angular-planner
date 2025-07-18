@@ -31,7 +31,7 @@ export class Calendar {
     selectable: true,
     selectMirror: true,
     nowIndicator: true,
-     events: [
+    events: [
       {
         title: 'Consultation: John Doe',
         start: new Date().toISOString().slice(0, 10) + 'T10:00:00',
@@ -58,10 +58,14 @@ export class Calendar {
     ).subscribe(result => {
       const newEvent = {
           title: `${result.reason}: ${result.patient}`,
-          start: result.start,
-          end: result.end
+          start: new Date(result.start).toISOString(),
+          end: new Date(result.end).toISOString(),
+          extendedProps: {
+            reason: result.reason,
+            duration: result.duration
+          }
         };
-        this.calendarOptions.events.push(newEvent);
+        this.calendarOptions.events = [...this.calendarOptions.events, newEvent];
     });
   }
 
