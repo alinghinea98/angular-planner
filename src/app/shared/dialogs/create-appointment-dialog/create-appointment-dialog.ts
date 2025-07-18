@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { TimeFormatPipe } from '../../pipes/time-format.pipe';
+import { Appointment } from '../../../core/models/appointment.type';
 
 
 @Component({
@@ -38,16 +39,26 @@ export class CreateAppointmentDialog {
   patient: string = '';
   reason: string = '';
   time: string = '';
-  start: Date;
+  start: Date | null = null;
   end: Date | null = null;
   duration: number | null = null;
   durationOptions = [10, 15, 30, 45, 60];
 
   constructor(
     public dialogRef: MatDialogRef<CreateAppointmentDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: { date: Date }
+    @Inject(MAT_DIALOG_DATA) public data: { date: Date, event: Appointment }
   ) {
-    this.start = data.date;
+    this._prefillDialog();
+  }
+
+  private _prefillDialog(): void {
+    this.start = this.data.date;
+    if (!!this.data.event) {
+      const event = this.data.event;
+      this.patient = event.patient;
+      this.time = event.time!;
+      return;
+    }
     const hours = this.start.getHours().toString().padStart(2, '0');
     const minutes = this.start.getMinutes().toString().padStart(2, '0');
     this.time = `${hours}:${minutes}`;
@@ -69,9 +80,5 @@ export class CreateAppointmentDialog {
       start: this.start,
       end: this.end
     });
-  }
-
-  cancel(): void {
-    this.dialogRef.close();
   }
 }

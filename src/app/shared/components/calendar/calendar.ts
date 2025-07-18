@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -7,6 +7,9 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateAppointmentDialog } from '../../dialogs/create-appointment-dialog/create-appointment-dialog';
 import { filter } from 'rxjs';
+import { AppointmentService } from '../../services/appointment.service';
+import { Appointment } from '../../../core/models/appointment.type';
+import { CalendarOptions } from '@fullcalendar/core';
 
 @Component({
   selector: 'app-calendar',
@@ -15,11 +18,12 @@ import { filter } from 'rxjs';
   templateUrl: './calendar.html',
   styleUrl: './calendar.scss'
 })
-export class Calendar {
+export class Calendar implements OnInit {
 
   private readonly _dialog = inject(MatDialog);
+  private _appointmentService: AppointmentService = inject(AppointmentService);
 
-  calendarOptions = {
+  calendarOptions: CalendarOptions = {
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
     initialView: 'timeGridWeek',
     headerToolbar: {
@@ -31,21 +35,18 @@ export class Calendar {
     selectable: true,
     selectMirror: true,
     nowIndicator: true,
-    events: [
-      {
-        title: 'Consultation: John Doe',
-        start: new Date().toISOString().slice(0, 10) + 'T10:00:00',
-        end: new Date().toISOString().slice(0, 10) + 'T11:00:00'
-      },
-      {
-        title: 'Checkup: Jane Smith',
-        start: new Date().toISOString().slice(0, 10) + 'T13:00:00',
-        end: new Date().toISOString().slice(0, 10) + 'T14:00:00'
-      }
-    ],
+    events: [],
     dateClick: this._handleDateClick.bind(this),
     eventClick: this._handleEventClick.bind(this),
   };
+
+  ngOnInit() {
+    this._appointmentService.getAppointments().subscribe({
+      next: (appointments: Appointment[]) => this.calendarOptions.events = appointments.map((app: Appointment) => {
+        return {...app, title: `${app.reason}: ${app.patient}`}
+      })
+    })
+  }
 
   private _handleDateClick(arg: any) {
     const selectedDate = new Date(arg.dateStr);
@@ -65,11 +66,19 @@ export class Calendar {
             duration: result.duration
           }
         };
-        this.calendarOptions.events = [...this.calendarOptions.events, newEvent];
+      this.calendarOptions.events = [
+        ...(Array.isArray(this.calendarOptions.events) ? this.calendarOptions.events : []),
+        newEvent
+      ];
     });
   }
 
   private _handleEventClick(arg: any) {
-    alert('Event: ' + arg.event.title);
+    const dialogRef = this._dialog.open(CreateAppointmentDialog, {
+      data: {
+        event: arg.event,
+        date: arg.event.start
+      }
+    });
   }
 }
